@@ -8,6 +8,10 @@
 6. Deploy the website files to any HTTPS static host. Do not use `file://` for the production site.
 7. Open the site, select **Admin login**, and sign in. The first edit or added week creates the shared planner records.
 
+## Upgrade an existing planner
+
+Before publishing the session/day version, run [supabase-sessions-migration.sql](supabase-sessions-migration.sql) once in the Supabase SQL Editor. It only adds the session tables, triggers, RLS policies, and Realtime entries. It does not update or delete existing weekly plans or weekly photos.
+
 The browser's anon key is not a secret. Supabase Row Level Security independently grants writes only when `public.is_admin()` identifies the authenticated administrator. Visitors have read-only database and photo access.
 
 ## Verify before sharing
