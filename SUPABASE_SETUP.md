@@ -12,6 +12,8 @@
 
 Before publishing the session/day version, run [supabase-sessions-migration.sql](supabase-sessions-migration.sql) once in the Supabase SQL Editor. It only adds the session tables, triggers, RLS policies, and Realtime entries. It does not update or delete existing weekly plans or weekly photos.
 
+Before publishing the Delete Week version, run [supabase-delete-week-migration.sql](supabase-delete-week-migration.sql) once in the Supabase SQL Editor. It safely links weekly photos to their week with cascading updates/deletes and installs the admin-only transactional deletion function. It does not delete or modify existing planner content.
+
 The browser's anon key is not a secret. Supabase Row Level Security independently grants writes only when `public.is_admin()` identifies the authenticated administrator. Visitors have read-only database and photo access.
 
 ## Verify before sharing
