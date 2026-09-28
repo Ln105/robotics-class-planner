@@ -1,48 +1,5 @@
--- Safe, non-destructive schema migration for the Delete Week feature.
--- Run once in Supabase SQL Editor before publishing the matching website files.
--- This migration does not delete or modify any existing planner content.
-
+-- Replaces only the Delete Week function. Does not delete or modify planner data.
 begin;
-
-do $$
-begin
-  if not exists (
-    select 1
-    from pg_constraint
-    where conname = 'planner_images_week_fk'
-      and conrelid = 'public.planner_images'::regclass
-  ) then
-    alter table public.planner_images
-      add constraint planner_images_week_fk
-      foreign key (month_index, week_index)
-      references public.planner_weeks (month_index, week_index)
-      on update cascade on delete cascade
-      not valid;
-  end if;
-end
-$$;
-
-alter table public.planner_images
-  validate constraint planner_images_week_fk;
-
-create table if not exists public.planner_storage_cleanup (
-  storage_path text primary key,
-  created_at timestamptz not null default now()
-);
-
-alter table public.planner_storage_cleanup enable row level security;
-
-drop policy if exists "admin can view pending storage cleanup" on public.planner_storage_cleanup;
-create policy "admin can view pending storage cleanup" on public.planner_storage_cleanup
-  for select to authenticated using (public.is_admin());
-drop policy if exists "admin can add pending storage cleanup" on public.planner_storage_cleanup;
-create policy "admin can add pending storage cleanup" on public.planner_storage_cleanup
-  for insert to authenticated with check (public.is_admin());
-drop policy if exists "admin can clear pending storage cleanup" on public.planner_storage_cleanup;
-create policy "admin can clear pending storage cleanup" on public.planner_storage_cleanup
-  for delete to authenticated using (public.is_admin());
-
-grant select, insert, delete on public.planner_storage_cleanup to authenticated;
 
 create or replace function public.delete_planner_week(
   p_month_index smallint,

@@ -252,7 +252,7 @@ begin
 
   insert into public.planner_storage_cleanup (storage_path)
   select unnest(v_paths)
-  on conflict (storage_path) do nothing;
+  on conflict do nothing;
 
   delete from public.planner_weeks
   where month_index = p_month_index
